@@ -1,0 +1,27 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "test",   // ,在launch
+            "command": "g++",
+            "args": [
+                "-g",           // 一定要，开启了调试
+                "-Wall",        // 一定要 ,开起了语法检查
+                "D:\\TestCode\\DataStructure\\test.cc",      // 需要改
+                "-o",
+                "D:\\TestCode\\DataStructure\\test.exe"    // 需要改,launch对应
+            ],
+            "options": {
+                "cwd": "D:\\TestCode\\DataStructure\\"       // 需要改，尽量一致可以不用改
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
