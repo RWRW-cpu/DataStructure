@@ -5,7 +5,7 @@ using namespace std;
 void SqeInsert(int i,int item,int size,int *p){//
     for(int j=size;j>i-1;j--){//从最后一个的后一个位序开始，直到这个位序
         p[j]=p[j-1];
-    }//最后一步是p[j]=1,j=1,i=1;先j--，然后判断0>0不通过，跳出循环
+    }//最后一步是j=2,j--,判断1>0,p[j-1]=1,p[j]=1,j=1,i=1;先j--，然后判断0>0不通过，跳出循环
     p[i-1]=item;//与上面的a[j-1]对应
     size++;
     for(int j=0;j<size;j++){

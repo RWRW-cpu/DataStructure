@@ -38,5 +38,20 @@ error
 #include <cstring>
 using namespace std;
 int main(){
+    int n;
+    cin>>n;
+    int t;
+    char *month[13]={"0","January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+    while(n--){
+        cin>>t;
+        if(t<13&&t>0){
+            for(int i=1;i<=t;i++){
+                if(i==t){
+                    cout<<month[i]<<endl;
+                }
+            }
+        }
+        else cout<<"error";
+    }
     return 0;
 }
