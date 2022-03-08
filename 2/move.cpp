@@ -1,46 +1,66 @@
-/*
- * Reverse_String.cpp
- *
- *  Created on: May 22, 2012
- *      Author: Rachel
- */
- 
-#include"stdio.h"
-#include"string.h"
- 
-void Reverse(char* str, int s, int e)
+#include <iostream>
+#include <cstring>
+#include <iomanip>
+#include <cmath>
+using namespace std;
+int len;
+void Left(int *List, int t)
 {
- char tmp;
- while (s < e)
- {
-  tmp = str[s];
-  str[s] = str[e];
-  str[e] = tmp;
-  s++;
-  e--;
- }
+    while (t--)
+    {
+        int temp = List[0];
+        for (int i = 1; i < len; i++)
+        {
+            List[i - 1] = List[i];
+        }
+        List[len - 1] = temp;
+    }
+
+    for (int i = 0; i < len; i++)
+    {
+        cout << List[i] << ' ';
+    }
+    cout << endl;
 }
- 
-void RightReverse(char* str, int k, int n)
+void Right(int *List, int t)
 {
- if (k > 0 && n > 0)//avoid exception
- {
-  Reverse(str, 0, k - 1);
-  Reverse(str, k, n - 1);
-  Reverse(str, 0, n - 1);
-  printf("%s\n", str);
- }
+    while (t--)
+    {
+        int temp = List[len - 1];
+        for (int i = len - 2; i >= 0; i--)
+        {
+            List[i + 1] = List[i];
+        }
+        List[0] = temp;
+    }
+    for (int i = 0; i < len; i++)
+    {
+        cout << List[i] << ' ';
+    }
 }
- 
 int main()
 {
- char str[25];
- int k, n;
- while (scanf("%s%d", str, &k) != EOF)
- {
-  n = strlen(str);
-  if (k > n)
-   k %= n;
-  RightReverse(str, k, n);
- }
+    cin >> len;
+    int *List = new int[1000];
+    for (int i = 0; i < len; i++)
+    {
+        cin >> List[i];
+    }
+    for (int i = 0; i < len; i++)
+    {
+        cout << List[i] << ' ';
+    }
+    cout<<endl;
+    int gg, t;
+    int test=2;
+    while (test--)
+    {
+        cin>>gg;
+        cin >> t;
+        if (gg == 0)
+            Left(List, t);
+        else
+            Right(List, t);
+    }
+    return 0;
 }
