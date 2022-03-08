@@ -28,10 +28,10 @@ SeqList::~SeqList() {
 void SeqList::multiInsert(int i, int n, int *item) {
     if(len+n>maxLen || i<1 || i>len+1)
         return;
-
+    //后移
     for(int j=len-1;j>=i-1;j--)
         list[j+n] = list[j];
-
+    //插入
     for(int j=i-1;j<i-1+n;j++)
         list[j] = item[j-i+1];
 

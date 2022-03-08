@@ -9,7 +9,7 @@ public:
     SeqList(int n);
     ~SeqList();
     void Init();
-    SeqList combineList(SeqList li); //注意，这里要传引用，不然传进去的对象会被析构，list内存会被重复delete
+    SeqList combineList(SeqList &li); //注意，这里要传引用，不然传进去的对象会被析构，list内存会被重复delete
     /* 不传就报错
     conbine.cpp:26:9: error: prototype for 'SeqList SeqList::combineList(SeqList&)' does not match any in class 'SeqList'
     SeqList SeqList::combineList(SeqList &li) {

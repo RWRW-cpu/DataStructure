@@ -2,3 +2,6 @@
 !.gitignore
 *.txt
 .vscode
+test
+.test
+test.cc
