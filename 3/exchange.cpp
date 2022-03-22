@@ -32,16 +32,18 @@ public:
     }
     ListNode *index(int i)
     {
-
+        //不合法的i返回null
+        if(i<0) return NULL;
+        //p指针指向head结点
         ListNode *p = head;
         int j = 0;
+        //while循环后，p指针指向i，一共i次循环
         while (p && j < i)
         {
             p = p->next;
             ++j;
         }
-        if (!p || j > i )
-            return NULL;
+        //当i超过len时返回的也是null
         return p;
     }
     void display()
@@ -56,15 +58,20 @@ public:
     }
     int insert(int i, int m)
     {
-       /*  //判断i合不合法（如果i是大于len的，则return -1）
-        if (index(i) == NULL)
-            return -1; */
+        //如果i是0或者负数，直接排除
+        if (i<1)
+            return -1;
         ListNode *p = head;
         int j = 0;
+        //执行完成while ，p指针指向i-1个元素
         while (p && j < i - 1)
         {
             p = p->next;
             ++j;
+        }
+        //如果执行完上面代码，p指向null，则说明i>len
+        if(p==NULL){
+            return -1;
         }
         ListNode *s = new ListNode();
         s->data = m;
@@ -73,16 +80,12 @@ public:
         len++;
         return 0;
     }
-    void swap(int a1, int b1)
+    int swap(int a1, int b1)
     {
-        /* ListNode *t1 = index(a1-1);
-        ListNode *a= index(a1);
-        cout<<a->data<<endl;
-
-        ListNode *t2 = index(b1 - 1);
-        ListNode *b = index(b1);
-        cout<<b->data<<endl; */
-
+        if(a1<1||b1<1||a1>len||b1>len){
+            cout<<"error";
+            return -1;
+        }
         ListNode *t1 = head;
         int j = 0;
         while (t1 && j < a1 - 1)
@@ -90,7 +93,7 @@ public:
             t1 = t1->next;
             ++j;
         }
-        cout<<t1->data<<endl;
+        //cout<<t1->data<<endl;
 
         ListNode *t2 = head;
         j = 0;
@@ -99,7 +102,7 @@ public:
             t2 = t2->next;
             ++j;
         }
-        cout<<t2->data<<endl;
+        //cout<<t2->data<<endl;
 
         ListNode *a=t1->next;
         ListNode *b=t2->next;
@@ -109,6 +112,10 @@ public:
 		b->next=a->next;
 		t2->next=a;
 		a->next=temp;
+
+        display();
+        return 0;
+
     }
 };
 
@@ -123,13 +130,15 @@ int main()
         list.insert(i, m);
     }
     list.display();
-    int x1,x2;
+    ListNode *s=list.index(3);
+    cout<<s->next->data<<endl;
+
+    /* int x1,x2;
     cin>>x1>>x2;
     list.swap(x1,x2);
-    list.display();
-    ListNode*s= list.index(3);
-    cout<<s->data<<endl;
-
+    
+    cin>>x1>>x2;
+    list.swap(x1,x2); */
     
     return 0;
 }
