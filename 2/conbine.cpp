@@ -1,92 +1,85 @@
 #include <iostream>
+#include <cstring>
+#include <iomanip>
+#include <cmath>
 using namespace std;
-
-class SeqList{
+class SeqList
+{
+protected:
     int *list;
     int len;
     int maxLen;
 public:
-    SeqList(int n);
-    ~SeqList();
-    void Init();
-    SeqList combineList(SeqList &li); //注意，这里要传引用，不然传进去的对象会被析构，list内存会被重复delete
-    /* 不传就报错
-    conbine.cpp:26:9: error: prototype for 'SeqList SeqList::combineList(SeqList&)' does not match any in class 'SeqList'
-    SeqList SeqList::combineList(SeqList &li) {
-            ^~~~~~~
-    conbine.cpp:12:13: error: candidate is: SeqList SeqList::combineList(SeqList)
-        SeqList combineList(SeqList li); //注istelete
-                ^~~~~~~~~~~    
-     */
+    SeqList(int n)
+    {
+        len = n;
+        maxLen = 10000;
+        list = new int[len];
+        for (int i = 0; i < n; i++)
+            cin >> list[i];
+    }
+    ~SeqList()
+    {
+        delete[] list;
+    }
+    friend SeqList combine(SeqList &s1, SeqList &s2)
+    {
+        SeqList s3(s1.len + s2.len);
+        int i = 0, j = 0, k = 0;
 
-    void outPut();
+        //结束  s1.len==i或s2.len==j
+        while (i < s1.len && j < s2.len)
+        {
+            //s2的比较小
+            if (s1.list[i] > s2.list[j])
+            {   
+                //s2赋值s3，s3和s2指向都加1
+                s3.list[k++] = s2.list[j++];
+            }
+            //s1的比较小
+            else
+            {
+                //s1赋值s3，s3和s1指向都加1
+                s3.list[k++] = s1.list[i++];
+            }
+        }
+        //未遍历完的加在后面
+        while (i < s1.len)
+        {
+            s3.list[k++] = s1.list[i++];
+        }
+        //未遍历完的加在后面
+        while (j < s2.len)
+        {
+            s3.list[k++] = s2.list[j++];
+        }
+    }
+    SeqList(const SeqList &s)
+    {
+        len = s.len;
+        for (int i = 0; i < len; i++)
+        {
+            list[i] = s.list[i];
+        }
+    }
+    void Display()
+    {
+        cout << len << ' ';
+        for (int i = 0; i < len; i++)
+        {
+            cout << list[i];
+        }
+        cout << endl;
+    }
 };
-
-SeqList::SeqList(int n) {
-    len = n;
-    maxLen = 1000;
-    list = new int[maxLen];
-}
-
-SeqList::~SeqList() {
-    delete []list;
-}
-
-SeqList SeqList::combineList(SeqList &li) {
-    SeqList combine(len+li.len);
-    int i=0,j=0,k=0;
-    while (i<len && j<li.len)
-    {
-        if(list[i]<li.list[j])
-        {
-            combine.list[k] = list[i];
-            i++;
-        }
-        else
-        {
-            combine.list[k] = li.list[j];
-            j++;
-        }
-        k++;
-    }
-
-    while (i<len)
-    {
-        combine.list[k] = list[i];
-        i++,k++;
-    }
-    while (j<li.len)
-    {
-        combine.list[k] = li.list[j];
-        j++,k++;
-    }
-
-    return combine;
-}
-
-void SeqList::Init() {
-    for(int i=0;i<len;i++)
-        cin>>list[i];
-}
-
-void SeqList::outPut() {
-    cout<<len<<' ';
-    for(int i=0;i<len;i++)
-        cout<<list[i]<<' ';
-    cout<<endl;
-}
-
 
 int main()
 {
-    int n,m;
-    cin>>n;
-    SeqList firstList(n);
-    firstList.Init();
-    cin>>m;
-    SeqList secondList(m);
-    secondList.Init();
-    SeqList thirdList = firstList.combineList(secondList);
-    thirdList.outPut();
-    return 0;
+    int n;
+    cin >> n;
+    SeqList s1(n);
+    cin >> n;
+    SeqList s2(n);
+    SeqList s3 = combine(s1, s2);
+    s3.Display();
 }
