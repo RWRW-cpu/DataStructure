@@ -3,5 +3,4 @@
 *.txt
 .vscode
 test
-.test
-*.cc
+test2.cc
