@@ -79,7 +79,7 @@ int temp1[2];
 bool insearch(int x, int y)
 {
     int flag = 0;
-    for (int i = 1; i <= 8; i++)
+    for (int i = 0; i < 8; i++)
     {
         if (&chess[x][y] == a1[i])
         {
@@ -89,7 +89,7 @@ bool insearch(int x, int y)
             break;
         }
     }
-    for (int i = 1; i <= 8; i++)
+    for (int i = 0; i < 8; i++)
     {
         if (&chess[x][y] == a2[i])
         {
@@ -99,7 +99,7 @@ bool insearch(int x, int y)
             break;
         }
     }
-    for (int i = 1; i <= 8; i++)
+    for (int i = 0; i <8; i++)
     {
         if (&chess[x][y] == a3[i])
         {
@@ -117,7 +117,7 @@ bool insearch(int x, int y)
             }
         }
     }
-    for (int i = 1; i <= 8; i++)
+    for (int i = 0; i < 8; i++)
     {
         if (&chess[x][y] == a4[i])
         {
@@ -136,7 +136,7 @@ bool insearch(int x, int y)
         }
     }
 
-    for (int i = 1; i <= 8; i++)
+    for (int i = 0; i < 8; i++)
     {
         if (&chess[x][y] == a5[i])
         {
@@ -146,7 +146,7 @@ bool insearch(int x, int y)
             return true;
         }
     }
-    for (int i = 1; i <= 8; i++)
+    for (int i = 0; i < 8; i++)
     {
         if (&chess[x][y] == a6[i])
         {
@@ -201,7 +201,7 @@ void gui()
 int main()
 {
     init();
-
+    gui();
     /* chess[3][1] = 1;
     chess[3][2] = -1;
     chess[3][3] = 1;
@@ -213,18 +213,20 @@ int main()
 
     //特殊情况考虑a1
 
-    //给你一个坐标找到他的两条链子
-    if (insearch(3, 1))
+    //给你一个chess坐标找到他的两条链子
+    if (insearch(4,5))
     {
         cout << temp[0] << " " << temp[1] << endl;
         cout << temp1[0] << " " << temp1[1] << endl;
+    }
+    else {
+        cout<<"error"<<endl;
     }
 
     int row = 1;
     int color = -1;
     for (int dx = -1; dx <= 1; dx++)
     { //二向搜索,翻转棋子
-
         if (dx == 0)
             continue;
         for (int rowp = row + dx; rowp <= 8 && rowp >= 1; rowp += dx)
@@ -235,7 +237,7 @@ int main()
         }
     }
 
-    gui();
+    
 
     //判断数组a1两个1之间是否夹着0，如果是，则将a1中的0改为1
 }
