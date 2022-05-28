@@ -201,17 +201,18 @@ void gui()
 int main()
 {
     init();
-    gui();
-    /* chess[3][1] = 1;
-    chess[3][2] = -1;
-    chess[3][3] = 1;
-    chess[3][4] = 1;
-    chess[3][5] = 1;
-    chess[3][6] = -1;
-    chess[3][7] = 1;
-    chess[3][8] = 1; */
+    
+    chess[4][1] = -1;
+    chess[4][2] = 1;
+    chess[4][3] = 1;
+    chess[4][4] = -1;
+    chess[4][5] = 1;
+    chess[4][6] = 1;
+    chess[4][7] = 1;
+    chess[4][8] = 1; 
 
-    //特殊情况考虑a1
+    gui();
+
 
     //给你一个chess坐标找到他的两条链子
     if (insearch(4,5))
@@ -223,7 +224,10 @@ int main()
         cout<<"error"<<endl;
     }
 
-    int row = 1;
+
+    
+
+    int row = 0;
     int color = -1;
     for (int dx = -1; dx <= 1; dx++)
     { //二向搜索,翻转棋子
@@ -231,28 +235,14 @@ int main()
             continue;
         for (int rowp = row + dx; rowp <= 8 && rowp >= 1; rowp += dx)
         {
-            if (*a3[rowp] != -color) break; //不是反色就退出
-            else if (rowp <= 8 && rowp >= 1 && *a3[rowp + dx] == color)
-                for (; rowp != row; rowp -= dx) *a3[rowp] = color; //存在反色棋子则搜寻同色,并翻转中间的所有反色棋子
+            if (*a4[rowp] != -color) break; //不是反色就退出
+            else if (rowp <= 8 && rowp >= 1 && *a4[rowp + dx] == color)
+                for (; rowp != row; rowp -= dx) *a4[rowp] = color; //存在反色棋子则搜寻同色,并翻转中间的所有反色棋子
         }
     }
-
-    
+    system("pause");
+    gui();
 
     //判断数组a1两个1之间是否夹着0，如果是，则将a1中的0改为1
 }
 
-/* int color = 1;
-    int index = temp[1];
-    int i = temp[1];
-    for (int dx = -1; dx <= 1; dx = dx + 2)
-    {
-        for (int row = (i + 8) % 8; (i + 8) != 0 && (i + 8) != 15; i = i + dx, row = (i + 8) % 8)
-        {
-            if (a[row] != color)
-                break;
-            else if (a[row + dx] == color)
-                for (; row != (index + 8) % 8; row = (i - 8 - dx) % 8)
-                    a[row] = color;
-        }
-    } */
