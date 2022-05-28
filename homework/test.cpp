@@ -9,10 +9,70 @@ int chess[6][8];
 int *a1[8];
 int *a2[8];
 int *a3[8];
-
 int *a4[8];
 int *a5[8];
 int *a6[8];
+void init(){
+    //初始化链表
+    a1[0] = &chess[1][3];
+    a1[1] = &chess[2][3];
+    a1[2] = &chess[3][3];
+    a1[3] = &chess[4][3];
+    a1[4] = &chess[5][3];
+    a1[5] = &chess[6][3];
+    a1[6] = &chess[3][8];
+    a1[7] = &chess[4][8];
+
+    a2[0] = &chess[1][4];
+    a2[1] = &chess[2][4];
+    a2[2] = &chess[3][4];
+    a2[3] = &chess[4][4];
+    a2[4] = &chess[5][4];
+    a2[5] = &chess[6][4];
+    a2[6] = &chess[3][7];
+    a2[7] = &chess[4][7];
+
+    a3[0] = &chess[3][1];
+    a3[1] = &chess[3][2];
+    a3[2] = &chess[3][3];
+    a3[3] = &chess[3][4];
+    a3[4] = &chess[3][5];
+    a3[5] = &chess[3][6];
+    a3[6] = &chess[3][7];
+    a3[7] = &chess[3][8];
+
+    a4[0] = &chess[4][1];
+    a4[1] = &chess[4][2];
+    a4[2] = &chess[4][3];
+    a4[3] = &chess[4][4];
+    a4[4] = &chess[4][5];
+    a4[5] = &chess[4][6];
+    a4[6] = &chess[4][7];
+    a4[7] = &chess[4][8];
+
+    a5[0] = &chess[3][2];
+    a5[1] = &chess[2][3];
+    a5[2] = &chess[2][4];
+    a5[3] = &chess[3][5];
+    a5[4] = &chess[4][5];
+    a5[5] = &chess[5][4];
+    a5[6] = &chess[5][3];
+    a5[7] = &chess[4][2];
+
+    a6[0] = &chess[3][1];
+    a6[1] = &chess[1][3];
+    a6[2] = &chess[1][4];
+    a6[3] = &chess[3][6];
+    a6[4] = &chess[4][6];
+    a6[5] = &chess[6][4];
+    a6[6] = &chess[6][3];
+    a6[7] = &chess[4][1];
+
+    chess[3][3]=-1;
+    chess[4][3]=1;
+    chess[3][4]=1;
+    chess[4][4]=-1;
+}
 
 int temp[2];
 int temp1[2];
@@ -106,7 +166,7 @@ void gui()
     system("cls");
     int score_black = 0, score_white = 0;
     printf("\033[0m\n        [黑白棋]\n\n    1 2 3 4 5 6 7 8\n  ┌─────────────────┐\n");
-    for (int i = 1; i <= 8; i++)
+    for (int i = 1; i <= 6; i++)
     {
         for (int j = 1; j <= 8; j++)
         {
@@ -114,11 +174,11 @@ void gui()
                 printf(" %c│ ", (i * 8 + j) / 8 - 1 + 'A');
             switch (chess[i][j])
             {
-            case 1:
+            case -1:
                 printf("○ "); //黑棋
                 score_black++;
                 break;
-            case -1:
+            case 1:
                 printf("● "); //白棋
                 score_white++;
                 break;
@@ -140,69 +200,16 @@ void gui()
 
 int main()
 {
-    //初始化链表
-    a1[0] = &chess[1][3];
-    a1[1] = &chess[2][3];
-    a1[2] = &chess[3][3];
-    a1[3] = &chess[4][3];
-    a1[4] = &chess[5][3];
-    a1[5] = &chess[6][3];
-    a1[6] = &chess[3][8];
-    a1[7] = &chess[4][8];
+    init();
 
-    a2[0] = &chess[1][4];
-    a2[1] = &chess[2][4];
-    a2[2] = &chess[3][4];
-    a2[3] = &chess[4][4];
-    a2[4] = &chess[5][4];
-    a2[5] = &chess[6][4];
-    a2[6] = &chess[3][7];
-    a2[7] = &chess[4][7];
-
-    a3[0] = &chess[3][1];
-    a3[1] = &chess[3][2];
-    a3[2] = &chess[3][3];
-    a3[3] = &chess[3][4];
-    a3[4] = &chess[3][5];
-    a3[5] = &chess[3][6];
-    a3[6] = &chess[3][7];
-    a3[7] = &chess[3][8];
-
-    a4[0] = &chess[4][1];
-    a4[1] = &chess[4][2];
-    a4[2] = &chess[4][3];
-    a4[3] = &chess[4][4];
-    a4[4] = &chess[4][5];
-    a4[5] = &chess[4][6];
-    a4[6] = &chess[4][7];
-    a4[7] = &chess[4][8];
-
-    a5[0] = &chess[3][2];
-    a5[1] = &chess[2][3];
-    a5[2] = &chess[2][4];
-    a5[3] = &chess[3][5];
-    a5[4] = &chess[4][5];
-    a5[5] = &chess[5][4];
-    a5[6] = &chess[5][3];
-    a5[7] = &chess[4][2];
-
-    a6[0] = &chess[3][1];
-    a6[1] = &chess[1][3];
-    a6[2] = &chess[1][4];
-    a6[3] = &chess[3][6];
-    a6[4] = &chess[4][6];
-    a6[5] = &chess[6][4];
-    a6[6] = &chess[6][3];
-    a6[7] = &chess[4][1];
-
-    chess[3][1] = 1;
+    /* chess[3][1] = 1;
     chess[3][2] = -1;
     chess[3][3] = 1;
     chess[3][4] = 1;
     chess[3][5] = 1;
     chess[3][6] = -1;
     chess[3][7] = 1;
-    chess[3][8] = 1;
+    chess[3][8] = 1; */
 
     //特殊情况考虑a1
 
