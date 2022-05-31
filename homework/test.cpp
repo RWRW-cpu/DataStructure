@@ -12,6 +12,13 @@ int chess[7][9] = {4, 4, 4, 4, 4, 4, 4, 4, 4,
                    4, 0, 0, 1, -1, 0, 0, 0, 0,
                    4, 4, 4, 0, 0, 4, 4, 4, 4,
                    4, 4, 4, 0, 0, 4, 4, 4, 4};
+
+
+class List{
+    public:
+    int *a[8];
+};
+
 int *a1[8];
 int *a2[8];
 int *a3[8];
@@ -228,6 +235,7 @@ bool react4(int color, int row)
         int flag = 0;  // 1表示实际 ，0表示虚拟
         for (int rowp = row + dx; times < 8; rowp += dx, times++)
         {
+            //过界
             if (rowp >= 8)
             {
                 rowp -= 8;
@@ -238,46 +246,33 @@ bool react4(int color, int row)
                 rowp += 8;
                 flag = -1;
             }
+            //正常
             if (flag == 0)
             {
-                if(rowp+dx==8){
-                    if (*a4[rowp] != -color )break; //不是反色就退出 如果一直是同色就继续
-                    else if (*a4[rowp+dx-8] == color)
-                    {
-                        for (; rowp != row; rowp -= dx)
-                        {
-                            *a4[rowp] = color; //存在反色棋子则搜寻同色,并翻转中间的所有反色棋子
-                        }
-                        all = true;
-                        break;
-                    }
+                 int temp;//处理rowp+dx过界的问题
+                if(rowp+dx==8)
+                {
+                    temp=rowp+dx-8;
                 }
-                else if(rowp+dx==-1){
-                    if (*a4[rowp] != -color )break; //不是反色就退出 如果一直是同色就继续
-                    else if (*a4[rowp+dx+8] == color)
-                    {
-                        for (; rowp != row; rowp -= dx)
-                        {
-                            *a4[rowp] = color; //存在反色棋子则搜寻同色,并翻转中间的所有反色棋子
-                        }
-                        all = true;
-                        break;
-                    }
+                else if(row+dx==-1){
+                    temp=rowp+dx+8;
                 }
-                else{
-                    if (*a4[rowp] != -color )break; //不是反色就退出 如果一直是同色就继续
-                    else if (*a4[rowp+dx] == color)
-                    {
-                        for (; rowp != row; rowp -= dx)
-                        {
-                            *a4[rowp] = color; //存在反色棋子则搜寻同色,并翻转中间的所有反色棋子
-                        }
-                        all = true;
-                        break;
-                    }
-                    
+                else {
+                    temp=rowp+dx;
                 }
+                if (*a4[rowp] != -color )break; //不是反色就退出 如果一直是同色就继续
+                else if (*a4[temp] == color)
+                {
+                    for (; rowp != row; rowp -= dx)
+                    {
+                        *a4[rowp] = color; //存在反色棋子则搜寻同色,并翻转中间的所有反色棋子
+                    }
+                    all = true;
+                    break;
+                }
+
             }
+            //去下界
             else if (flag == -1)
             {
                 
@@ -296,10 +291,11 @@ bool react4(int color, int row)
                     break;
                 }
             }
+            //去上界
             else if (flag == 1)
             {
                 
-                
+                //正常的搜索
                 if (*a4[rowp] != -color  )
                 break;
                 else if (*a4[rowp+dx] == color)
@@ -314,7 +310,6 @@ bool react4(int color, int row)
                     all = true;
                     break;
                 }
-                
             }
         }
         
@@ -656,3 +651,43 @@ bool react4(int color, int row)
 
 
  */
+
+
+/* //处理rowp+dx过界的问题
+                if(rowp+dx==8){
+                    if (*a4[rowp] != -color )break; //不是反色就退出 如果一直是同色就继续
+                    else if (*a4[rowp+dx-8] == color)
+                    {
+                        for (; rowp != row; rowp -= dx)
+                        {
+                            *a4[rowp] = color; //存在反色棋子则搜寻同色,并翻转中间的所有反色棋子
+                        }
+                        all = true;
+                        break;
+                    }
+                }
+                else if(rowp+dx==-1){
+                    if (*a4[rowp] != -color )break; //不是反色就退出 如果一直是同色就继续
+                    else if (*a4[rowp+dx+8] == color)
+                    {
+                        for (; rowp != row; rowp -= dx)
+                        {
+                            *a4[rowp] = color; //存在反色棋子则搜寻同色,并翻转中间的所有反色棋子
+                        }
+                        all = true;
+                        break;
+                    }
+                }
+                else{
+                    if (*a4[rowp] != -color )break; //不是反色就退出 如果一直是同色就继续
+                    else if (*a4[rowp+dx] == color)
+                    {
+                        for (; rowp != row; rowp -= dx)
+                        {
+                            *a4[rowp] = color; //存在反色棋子则搜寻同色,并翻转中间的所有反色棋子
+                        }
+                        all = true;
+                        break;
+                    }
+                    
+                } */
