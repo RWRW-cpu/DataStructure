@@ -1,3 +1,4 @@
+//有bug的AI
 #include <iostream>
 #include <windows.h>
 #include <cstdlib>

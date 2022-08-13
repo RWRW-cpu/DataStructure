@@ -1,3 +1,4 @@
+//min-max
 #include <iostream>
 #include <windows.h>
 #include <cstdlib>
@@ -407,7 +408,7 @@ bool reactReal(int color,int n,int row,List *list){
         return false;
 }
 
-//搜索可下棋的部位
+//搜索可下棋的部位//并翻转
 bool insearchReal(int color,List *list,Chess &ch){
 
     //重置
@@ -459,78 +460,88 @@ struct Move
 	int row, col;
 };
 
+int  player = 1, opponent = -1;
 //贪心算法评价这个棋盘
 int evaluate(List *list,Chess &ch){
     int score=0;
     for(int i=1;i<=6;i++){
         for(int j=1;j<=8;j++){
-            if(ch.chess[i][j]==1)
+            if(ch.chess[i][j]==player)
             {
                 score++;
             }
-            else if(ch.chess[i][j]==-1)
+            else if(ch.chess[i][j]==opponent)
             {
                 score--;
             }
         }
     }
-    if(score>14) return 10;
-    else if(score<-10) return -10;
-    else return 0;
+    return score;
 }
 
-int minimax(List *list,Chess &ch, int depth, bool isMax,int alpha,int beta){
+Chess copychess(Chess &ch0,Chess &ch){
+	Chess temp;
+	for(int i=1;i<=6;i++)
+	for(int j=1;j<=8;j++)
+	{
+		ch.chess[i][j]=ch0.chess[i][j];
+	}
+}
+
+int minimax(List *list,Chess &ch, int depth, bool isMax){
     int score = evaluate(list,ch);
 
 	// If Maximizer has won the game return his/her
 	// evaluated score
-	if (score == 10)
+	if (score >=5 )
 		return score;
 
 	// If Minimizer has won the game return his/her
 	// evaluated score
-	if (score == -10)
+	if (score <= -10)
 		return score;
 
 	// If there are no more moves and no winner then
 	// it is a tie
-    if(!insearchReal((isMax==true)?0:1,list,ch))
-    {
-        return 0;
-    }
-    // If this maximizer's move
-    if (isMax)
-    {
-        int best = -1000;
+	if (insearchReal(isMax==true?player:opponent,list,ch)==false)
+		return 0;
 
-        // Traverse all cells
+	// If this maximizer's move
+	if (isMax)
+	{
+		int best = -1000;
+
+		// Traverse all cells
 		for (int i = 1; i<=6; i++)
 		{
 			for (int j = 1; j<=8; j++)
 			{
 				// Check if cell is empty
-				if (ch.chess[i][j]==2)
+				if (ch.chess[i][j]==player*2)
 				{
+                    //copy the chess
+                    Chess tempch;
+                    copychess(ch,tempch);
 					// Make the move
-					ch.chess[i][j] = 1;
+					ch.chess[i][j] = player;
+                    insearch2(i,j,list,ch);
+					react(player,temp[0],temp[1],list);
+					react(player,temp1[0],temp1[1],list);
 
 					// Call minimax recursively and choose
 					// the maximum value
 					best = max( best,
-						minimax(list,ch, depth+1, !isMax,alpha,beta) );
-                    alpha = max(alpha, best);
+						minimax(list,ch, depth+1, !isMax) );
+
 					// Undo the move
-					ch.chess[i][j] = 0;
-                    // Alpha Beta Pruning
-                    if (beta <= alpha)
-                            break;                    
+					copychess(tempch,ch);
 				}
 			}
 		}
 		return best;
-    }
+	}
 
-    // If this minimizer's move
+	// If this minimizer's move
 	else
 	{
 		int best = 1000;
@@ -541,24 +552,27 @@ int minimax(List *list,Chess &ch, int depth, bool isMax,int alpha,int beta){
 			for (int j = 1; j<=8; j++)
 			{
 				// Check if cell is empty
-				if (ch.chess[i][j]==-2)
-				{
+				if (ch.chess[i][j]==2*opponent)
+                {
+                    //copy the chess
+                    Chess tempch;
+                    copychess(ch,tempch);
 					// Make the move
-					ch.chess[i][j] = -1;
+                    ch.chess[i][j] = opponent;
+                    insearch2(i,j,list,ch);
+                    react(opponent,temp[0],temp[1],list);
+                    react(opponent,temp1[0],temp1[1],list);
+					
 
 					// Call minimax recursively and choose
 					// the minimum value
 					best = min(best,
-						minimax(list,ch, depth+1, !isMax,alpha,beta));
-                    beta = min(beta, best);
+						minimax(list,ch, depth+1, !isMax));
+
 					// Undo the move
-					ch.chess[i][j] = 0;
-                    
-                    // Alpha Beta Pruning
-                    if (beta <= alpha)
-                        break;
+                    copychess(tempch,ch);
+					
 				}
-                
 			}
 		}
 		return best;
@@ -579,17 +593,23 @@ Move findBestMove(List *list,Chess &ch){
 		for (int j = 1; j<=8; j++)
 		{
 			// Check if cell is empty
-			if (ch.chess[i][j]==2)
+			if (ch.chess[i][j]==2*player)
 			{
+                //copy the chess
+                Chess tempch;
+                copychess(ch,tempch);
 				// Make the move
-				ch.chess[i][j] = 1;
+                ch.chess[i][j] = player;
+                insearch2(i,j,list,ch);
+                react(player,temp[0],temp[1],list);
+                react(player,temp1[0],temp1[1],list);
 
 				// compute evaluation function for this
 				// move.
-				int moveVal = minimax(list,ch, 0, false,-1000,1000);
+				int moveVal = minimax(list,ch, 0, false);
 
 				// Undo the move
-				ch.chess[i][j] = 0;
+				copychess(tempch,ch);
 
 				// If the value of the current move is
 				// more than the best value, then update
@@ -608,6 +628,7 @@ Move findBestMove(List *list,Chess &ch){
 			bestVal);
 
 	return bestMove;
+    
 }
 
 

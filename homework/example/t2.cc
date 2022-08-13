@@ -52,14 +52,14 @@ int gui( int * const piece )
 	printf("\033[0m\n        [黑白棋]\n\n    1 2 3 4 5 6 7 8\n  ┌─────────────────┐\n");
 	for( int i=0 ; i<=63 ; i++ )
 	{
-		if( i%8 == 0 )  printf(" %c│ ", i/8+'A' );
+		if( i%8 == 0 )  printf(" %c│ ", i/8+'1' );
 		switch ( piece[i] )
 		{
 			case  1:
-				printf("○");		//黑棋 
+				printf("○ ");		//黑棋 
 				score_black++; break;
 			case -1:
-				printf("●");		//白棋 
+				printf("● ");		//白棋 
 				score_white++; break;
 			case  2:
 			case -2:

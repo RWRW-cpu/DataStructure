@@ -1,3 +1,4 @@
+//寻找两条链子
 #include <iostream>
 #include <windows.h>
 #include <cstdlib>

@@ -77,7 +77,7 @@ int evaluate(char b[3][3])
 // This is the minimax function. It considers all
 // the possible ways the game can go and returns
 // the value of the board
-int minimax(char board[3][3], int depth, bool isMax)
+int minimax(char board[3][3], int depth, bool isMax,int alpha,int beta)
 {
 	int score = evaluate(board);
 
@@ -115,10 +115,13 @@ int minimax(char board[3][3], int depth, bool isMax)
 					// Call minimax recursively and choose
 					// the maximum value
 					best = max( best,
-						minimax(board, depth+1, !isMax) );
-
+						minimax(board, depth+1, !isMax,alpha,beta) );
+                    alpha = max(alpha, best);
 					// Undo the move
 					board[i][j] = '_';
+                    // Alpha Beta Pruning
+                    if (beta <= alpha)
+                            break;                    
 				}
 			}
 		}
@@ -144,11 +147,16 @@ int minimax(char board[3][3], int depth, bool isMax)
 					// Call minimax recursively and choose
 					// the minimum value
 					best = min(best,
-						minimax(board, depth+1, !isMax));
-
+						minimax(board, depth+1, !isMax,alpha,beta));
+                    beta = min(beta, best);
 					// Undo the move
 					board[i][j] = '_';
+                    
+                    // Alpha Beta Pruning
+                    if (beta <= alpha)
+                        break;
 				}
+                
 			}
 		}
 		return best;
@@ -178,7 +186,7 @@ Move findBestMove(char board[3][3])
 
 				// compute evaluation function for this
 				// move.
-				int moveVal = minimax(board, 0, false);
+				int moveVal = minimax(board, 0, false,-1000,1000);
 
 				// Undo the move
 				board[i][j] = '_';
@@ -208,14 +216,26 @@ int main()
 	char board[3][3] =
 	{
 		{ 'x', 'o', 'x' },
-		{ 'o', 'o', 'x' },
-		{ '_', '_', '_' }
+		{ 'o', '_', 'x' },
+		{ '_', 'o', '_' }
 	};
+    clock_t start = clock(); 
 
+    //我们是x，对方是o
 	Move bestMove = findBestMove(board);
+    clock_t end = clock();
+	printf(" 时间 : %f second\n", (double)(end - start) / CLOCKS_PER_SEC);
+	for(int i=0;i<3;i++)
+	{
+		for(int j=0;j<3;j++)
+		{
+			printf("%c ",board[i][j]);
+		}
+		printf("\n");
+	}
 
 	printf("The Optimal Move is :\n");
-	printf("ROW: %d COL: %d\n\n", bestMove.row,
-								bestMove.col );
+	printf("ROW: %d COL: %d\n\n", bestMove.row+1,
+								bestMove.col+1 );
 	return 0;
 }

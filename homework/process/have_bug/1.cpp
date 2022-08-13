@@ -459,6 +459,15 @@ struct Move
 	int row, col;
 };
 
+Chess copy(Chess ch){
+	Chess temp;
+	for(int i=1;i<=6;i++)
+	for(int j=1;j<=8;j++)
+	{
+		temp.chess[i][j]=ch.chess[i][j];
+	}
+}
+
 //贪心算法评价这个棋盘
 int evaluate(List *list,Chess &ch){
     int score=0;
@@ -474,9 +483,7 @@ int evaluate(List *list,Chess &ch){
             }
         }
     }
-    if(score>14) return 10;
-    else if(score<-10) return -10;
-    else return 0;
+    return score;
 }
 
 int minimax(List *list,Chess &ch, int depth, bool isMax,int alpha,int beta){
@@ -484,13 +491,13 @@ int minimax(List *list,Chess &ch, int depth, bool isMax,int alpha,int beta){
 
 	// If Maximizer has won the game return his/her
 	// evaluated score
-	if (score == 10)
+	if (score >= 14)
 		return score;
 
 	// If Minimizer has won the game return his/her
 	// evaluated score
-	if (score == -10)
-		return score;
+	if (score <= -10)
+		return score; 
 
 	// If there are no more moves and no winner then
 	// it is a tie
@@ -498,7 +505,7 @@ int minimax(List *list,Chess &ch, int depth, bool isMax,int alpha,int beta){
     {
         return 0;
     }
-    // If this maximizer's move
+    // If this maximizer's move//白棋下
     if (isMax)
     {
         int best = -1000;
@@ -511,8 +518,12 @@ int minimax(List *list,Chess &ch, int depth, bool isMax,int alpha,int beta){
 				// Check if cell is empty
 				if (ch.chess[i][j]==2)
 				{
+					Chess tempch=copy(ch);
 					// Make the move
 					ch.chess[i][j] = 1;
+					insearch2(i,j,list,ch);
+					react(1,temp[0],temp[1],list);
+					react(1,temp1[0],temp1[1],list);
 
 					// Call minimax recursively and choose
 					// the maximum value
@@ -520,10 +531,12 @@ int minimax(List *list,Chess &ch, int depth, bool isMax,int alpha,int beta){
 						minimax(list,ch, depth+1, !isMax,alpha,beta) );
                     alpha = max(alpha, best);
 					// Undo the move
-					ch.chess[i][j] = 0;
-                    // Alpha Beta Pruning
+					ch=copy(tempch);
+					//ch.chess[i][j] = 0;
+
+                    /* // Alpha Beta Pruning
                     if (beta <= alpha)
-                            break;                    
+                            break; */                    
 				}
 			}
 		}
@@ -543,8 +556,12 @@ int minimax(List *list,Chess &ch, int depth, bool isMax,int alpha,int beta){
 				// Check if cell is empty
 				if (ch.chess[i][j]==-2)
 				{
+					Chess tempch=copy(ch);
 					// Make the move
 					ch.chess[i][j] = -1;
+					insearch2(i,j,list,ch);
+					react(-1,temp[0],temp[1],list);
+					react(-1,temp1[0],temp1[1],list);
 
 					// Call minimax recursively and choose
 					// the minimum value
@@ -552,11 +569,12 @@ int minimax(List *list,Chess &ch, int depth, bool isMax,int alpha,int beta){
 						minimax(list,ch, depth+1, !isMax,alpha,beta));
                     beta = min(beta, best);
 					// Undo the move
-					ch.chess[i][j] = 0;
+					ch=copy(tempch);
+					//ch.chess[i][j] = 0;
                     
-                    // Alpha Beta Pruning
+                    /* // Alpha Beta Pruning
                     if (beta <= alpha)
-                        break;
+                        break; */
 				}
                 
 			}
@@ -581,15 +599,21 @@ Move findBestMove(List *list,Chess &ch){
 			// Check if cell is empty
 			if (ch.chess[i][j]==2)
 			{
-				// Make the move
+				Chess tempch=copy(ch);
+				// Make the move并且翻转
 				ch.chess[i][j] = 1;
+                insearch2(bestMove.row,bestMove.col,list,ch);
+                react(1,temp[0],temp[1],list);
+                react(1,temp1[0],temp1[1],list);
+
 
 				// compute evaluation function for this
 				// move.
 				int moveVal = minimax(list,ch, 0, false,-1000,1000);
 
 				// Undo the move
-				ch.chess[i][j] = 0;
+				ch=copy(tempch);
+				//ch.chess[i][j] = 0;
 
 				// If the value of the current move is
 				// more than the best value, then update

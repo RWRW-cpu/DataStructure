@@ -1,3 +1,4 @@
+//带有头结点
 #include <iostream>
 using namespace std;
 #define ok 0
@@ -15,7 +16,6 @@ public:
     ListNode * head;
     int len;
     LinkList();
-    ~LinkList();
     ListNode *LL_index(int i);
     int LL_get(int i);
     int LL_insert(int i,int item);
@@ -27,27 +27,28 @@ LinkList::LinkList()
     head=new ListNode();
     len=0;
 }
-LinkList::~LinkList()
+
+LinkList *init()
 {
-    ListNode*p,*q;
-    p=head;
-    while(p!=NULL){
-        q=p;
-        p=p->next;
-        delete q;
-    }
-    len=0;
-    head=NULL;
-}
+    LinkList *L=new LinkList();
+    L->head->next=L->head;
+    return L;
+ }
+
+
 int LinkList::LL_insert(int i,int item)
 {
     //第i个元素的前驱不存在（第i个元素的地址不存在）
     
     if(LL_index(i)==NULL) return -1;
     ListNode *p=LL_index(i);
+    //初始化新节点
     ListNode *s=new ListNode();
     s->data=item;
+
+    //先继承
     s->next=p->next;
+    //再插入
     p->next=s;
     len++;
     return 0;
@@ -99,8 +100,8 @@ int LinkList::LL_get(int i)
 void LinkList::LL_display()
 {
 
-    ListNode *p=head->next;
-    while(p)
+    ListNode *p=head->next->next;
+    while(p!=head)
     {
         cout<<p->data<<" ";
         p=p->next;
@@ -118,45 +119,6 @@ int main()
         list.LL_insert(i,m);
     }
     list.LL_display();
-    cin>>n>>m;
-    if(list.LL_insert(n,m)==-1)
-    cout<<"error"<<endl;
-    else
-        list.LL_display();
-    cin>>n>>m;
-    if(list.LL_insert(n,m)==-1)
-        cout<<"error"<<endl;
-    else
-    {
-        list.LL_display();
-    }
-    cin>>n;
-    if(list.LL_del(n)==-1)
-        cout<<"error"<<endl;
-    else
-    {
-        list.LL_display();
-    }
-    cin>>n;
-    if(list.LL_del(n)==-1)
-        cout<<"error"<<endl;
-    else
-    {
-        list.LL_display();
-    }
-    cin>>n;
-    if(list.LL_get(n)==-1)
-        cout<<"error"<<endl;
-    else
-    {
-        cout<<list.LL_get(n)<<endl;
-    }
-    cin>>n;
-    if(list.LL_get(n)==-1)
-        cout<<"error"<<endl;
-    else
-    {
-        cout<<list.LL_get(n)<<endl;
-    }
+    
     return 0;
 }

@@ -5,6 +5,18 @@
 #include <fstream>
 using namespace std;
 
+void info(){
+    cout<<"      你好，欢迎来到黑白棋!"<<endl;
+    cout<<"1.黑棋先行;"<<endl;
+    cout<<"2.落子之后同一条线上如果有其他己方棋子，则两颗己方棋子之间包夹的所有对方棋子均变换颜色;"<<endl;
+    cout<<"3.每次落子都必须要有翻转，反之则不能落子，由对方继续行动;"<<endl;
+    cout<<"4.所有交叉点都落子，或是一方所有棋子都被翻转时，游戏结束;"<<endl;
+    cout<<"5.游戏结束时，棋子更多的一方获胜。"<<endl;
+    system("pause");
+}
+int temp[2];
+int temp1[2];
+
 class Chess{
     public:
     int chess[7][9];
@@ -34,8 +46,6 @@ class Chess{
 
 };
 
-int temp[2];
-int temp1[2];
 
 //链表
 class List{
@@ -186,7 +196,7 @@ bool  insearch2(int x,int y,List *list,Chess &ch){
 //输出棋盘界面
 void gui(Chess ch)
 {
-    //system("cls");
+    system("cls");
     int score_black = 0, score_white = 0;
     printf("\033[0m\n        [黑白棋]\n\n    1 2 3 4 5 6 7 8\n  ┌─────────────────┐\n");
     for (int i = 1; i <= 6; i++)
@@ -194,7 +204,7 @@ void gui(Chess ch)
         for (int j = 1; j <= 8; j++)
         {
             if (j % 8 == 1)
-                printf(" %c│ ", (i * 8 + j) / 8 - 1 + 'A');
+                printf(" %c│ ", (i * 8 + j) / 8 - 1 + '1');
             switch (ch.chess[i][j])
             {
             case -1:
@@ -407,7 +417,7 @@ bool reactReal(int color,int n,int row,List *list){
         return false;
 }
 
-//搜索可下棋的部位
+//搜索可下棋的部位//并翻转
 bool insearchReal(int color,List *list,Chess &ch){
 
     //重置
@@ -433,132 +443,130 @@ bool insearchReal(int color,List *list,Chess &ch){
     return false;
 }
 
-typedef struct AI{//结构体
-	int x;
-	int y;
-}AI; 
-AI moveAi(List *list,Chess &ch)
-{
-
-    AI m={0,0};
-    for(int i=1;i<=6;i++)
-    for(int j=1;j<=8;j++)
-    {
-        if(ch.chess[i][j]==2)
-        {
-            m.x=i;
-            m.y=j;
-            return m;
-        }
-    }
-
-}
 
 struct Move
 {
 	int row, col;
 };
 
+int  player = 1, opponent = -1;
 //贪心算法评价这个棋盘
 int evaluate(List *list,Chess &ch){
     int score=0;
     for(int i=1;i<=6;i++){
         for(int j=1;j<=8;j++){
-            if(ch.chess[i][j]==1)
+            if(ch.chess[i][j]==player)
             {
                 score++;
             }
-            else if(ch.chess[i][j]==-1)
+            else if(ch.chess[i][j]==opponent)
             {
                 score--;
             }
         }
     }
-    if(score>14) return 10;
-    else if(score<-10) return -10;
-    else return 0;
+    return score;
 }
 
-int minimax(List *list,Chess &ch, int depth, bool isMax,int alpha,int beta){
+Chess copychess(Chess &ch0,Chess &ch){
+	Chess temp;
+	for(int i=1;i<=6;i++)
+	for(int j=1;j<=8;j++)
+	{
+		ch.chess[i][j]=ch0.chess[i][j];
+	}
+}
+
+int afabeta(List *list,Chess &ch, int depth, bool isMax,int alpha,int beta){
     int score = evaluate(list,ch);
 
-	// If Maximizer has won the game return his/her
-	// evaluated score
-	if (score == 10)
+	//如果这个评价大于7，就是比对方要多7颗棋子
+	if (score >=7 )
 		return score;
 
-	// If Minimizer has won the game return his/her
-	// evaluated score
-	if (score == -10)
+	//如果这个评价小于-14，就是比对方要少14颗棋子
+	if (score <= -14)
 		return score;
 
-	// If there are no more moves and no winner then
-	// it is a tie
-    if(!insearchReal((isMax==true)?0:1,list,ch))
-    {
-        return 0;
-    }
-    // If this maximizer's move
-    if (isMax)
-    {
-        int best = -1000;
+	//该子无子可下
+	if (insearchReal(isMax==true?player:opponent,list,ch)==false)
+		return 0;
 
-        // Traverse all cells
+	//如果是白棋下，也就是max方
+	if (isMax)
+	{
+		int best = -1000;
+
+		// Traverse 整个棋盘
 		for (int i = 1; i<=6; i++)
 		{
 			for (int j = 1; j<=8; j++)
 			{
-				// Check if cell is empty
-				if (ch.chess[i][j]==2)
+				// 判断是否能下
+				if (ch.chess[i][j]==player*2)
 				{
-					// Make the move
-					ch.chess[i][j] = 1;
+                    //先copy一下，以便后面的撤销
+                    Chess tempch;
+                    copychess(ch,tempch);
+					// 做选择
+					ch.chess[i][j] = player;
+                    insearch2(i,j,list,ch);
+					react(player,temp[0],temp[1],list);
+					react(player,temp1[0],temp1[1],list);
 
-					// Call minimax recursively and choose
-					// the maximum value
+					// 取胜率的最大值
+					// 更新alpha值
 					best = max( best,
-						minimax(list,ch, depth+1, !isMax,alpha,beta) );
+						afabeta(list,ch, depth+1, !isMax,alpha,beta) );
                     alpha = max(alpha, best);
-					// Undo the move
-					ch.chess[i][j] = 0;
-                    // Alpha Beta Pruning
+
+					// 撤销
+					copychess(tempch,ch);
+                    // Alpha Beta 剪枝叶
                     if (beta <= alpha)
-                            break;                    
+                            break;       
+                    
 				}
 			}
 		}
 		return best;
-    }
+	}
 
-    // If this minimizer's move
+	//如果是黑棋下，也就是min方
 	else
 	{
 		int best = 1000;
 
-		// Traverse all cells
+		// Traverse 整个棋盘
 		for (int i = 1; i<=6; i++)
 		{
 			for (int j = 1; j<=8; j++)
 			{
-				// Check if cell is empty
-				if (ch.chess[i][j]==-2)
-				{
-					// Make the move
-					ch.chess[i][j] = -1;
+				// 判断是否能下
+				if (ch.chess[i][j]==2*opponent)
+                {
+                    //先copy一下，以便后面的撤销
+                    Chess tempch;
+                    copychess(ch,tempch);
+					// 做选择
+                    ch.chess[i][j] = opponent;
+                    insearch2(i,j,list,ch);
+                    react(opponent,temp[0],temp[1],list);
+                    react(opponent,temp1[0],temp1[1],list);
+					
 
-					// Call minimax recursively and choose
-					// the minimum value
+					// 取胜率的最小值
+					// 更新beta
 					best = min(best,
-						minimax(list,ch, depth+1, !isMax,alpha,beta));
+						afabeta(list,ch, depth+1, !isMax,alpha,beta));
                     beta = min(beta, best);
-					// Undo the move
-					ch.chess[i][j] = 0;
-                    
-                    // Alpha Beta Pruning
+
+					// 撤销
+                    copychess(tempch,ch);
+                    // Alpha Beta 剪枝叶
                     if (beta <= alpha)
-                        break;
+                        break;					
 				}
-                
 			}
 		}
 		return best;
@@ -571,29 +579,32 @@ Move findBestMove(List *list,Chess &ch){
 	bestMove.row = -1;
 	bestMove.col = -1;
 
-	// Traverse all cells, evaluate minimax function for
-	// all empty cells. And return the cell with optimal
-	// value.
+	// Traverse 整个棋盘
+    //evaluate afabeta 可下的棋子的胜率
+    //return 可选项
 	for (int i = 1; i<=6; i++)
 	{
 		for (int j = 1; j<=8; j++)
 		{
-			// Check if cell is empty
-			if (ch.chess[i][j]==2)
+			// 判断是否能下
+			if (ch.chess[i][j]==2*player)
 			{
-				// Make the move
-				ch.chess[i][j] = 1;
+                //先copy一下，以便后面的撤销
+                Chess tempch;
+                copychess(ch,tempch);
+				// 做选择
+                ch.chess[i][j] = player;
+                insearch2(i,j,list,ch);
+                react(player,temp[0],temp[1],list);
+                react(player,temp1[0],temp1[1],list);
 
-				// compute evaluation function for this
-				// move.
-				int moveVal = minimax(list,ch, 0, false,-1000,1000);
+				//算出score
+				int moveVal = afabeta(list,ch, 0, false,-1000,1000);
 
-				// Undo the move
-				ch.chess[i][j] = 0;
+				// 撤销
+				copychess(tempch,ch);
 
-				// If the value of the current move is
-				// more than the best value, then update
-				// best/
+				//如果之后的score较大，则更新
 				if (moveVal > bestVal)
 				{
 					bestMove.row = i;
@@ -604,44 +615,35 @@ Move findBestMove(List *list,Chess &ch){
 		}
 	}
 
-	printf("The value of the best Move is : %d\n\n",
+	printf("AI能赢你%d个棋子\n",
 			bestVal);
 
 	return bestMove;
+    
 }
 
-
-
+//除了没下其他棋子全为白棋
+bool allColor(Chess &ch){
+    for(int i=1;i<=6;i++)
+	for(int j=1;j<=8;j++)
+	{
+		if(ch.chess[i][j]==-1) return false;
+	}
+}
 
 int main()
 {
     List *list=new List [7];
     Chess ch;
     init2(list,ch);
-    /* ch.chess[1][3]=-1;
-    ch.chess[2][3]=-1;
-    ch.chess[3][1]=-1;
-    ch.chess[4][1]=-1;
-    ch.chess[4][2]=-1;
-    ch.chess[4][5]=-1;
-    ch.chess[4][6]=-1;
-    ch.chess[4][7]=-1;
-    ch.chess[4][8]=-1;
-    ch.chess[3][2]=1;
-    ch.chess[3][3]=1;
-    ch.chess[4][3]=1;
-    ch.chess[4][4]=1;
-    ch.chess[5][3]=1;
-    ch.chess[5][4]=1;
-    ch.chess[6][3]=-1;
-    ch.chess[3][5]=-1;   
-    ch.chess[3][6]=-1; */
 
     int sign=4;
     //int sign=19;
     int color=-1;//黑手先下
     int x=0, y=0;
-    // system("pause");
+    //规则
+    info();
+    
     do{
         //寻找可以下棋的位置,并react标记成2或者-2
         if(insearchReal(color,list,ch)) {
@@ -686,7 +688,7 @@ int main()
                 //AI是player，我们是opponent
                 Move bestMove = findBestMove(list,ch);
                 clock_t end = clock();
-                printf(" 时间 : %f second\n", (double)(end - start) / CLOCKS_PER_SEC);
+                printf(" AI思考的时间 : %f second\n", (double)(end - start) / CLOCKS_PER_SEC);
 
                 //翻转并下棋
                 insearch2(bestMove.row,bestMove.col,list,ch);
@@ -697,7 +699,11 @@ int main()
                 x=bestMove.row;
                 y=bestMove.col;
                 color=-color;//反色以便对方下棋
+                system("pause");
             }
+        }
+        else if(allColor(ch)){
+            sign=24;
         }
         else{
             gui(ch);

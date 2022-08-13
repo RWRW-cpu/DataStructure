@@ -22,7 +22,6 @@ int student_num = 0;
 void Sort_by_score();//按成绩排序
 //输入score计算GPA等级为A+, A, B+, B, C+, C, D, F,F为60分以下的成绩
 
-
 //Adds(n, name[], id[], score[]): 批量新增n个学⽣的信息；
 void Adds(int n, char name[][20], double id[], int score[])
 {
@@ -66,7 +65,8 @@ void Add(char name1[],char name2[], double id, int score)
     student_list[student_num].number = id;
     student_list[student_num].C_grade = score;
     //如果12位学号前4位为2021、2020、2019，则为重修学生，否则为正常学生
-    if(id/100000000==2020||id/100000000==2019)
+    int b=id/100000000;
+    if(b==2020||b==2019)
         student_list[student_num].re_grade = 1;
     else
         student_list[student_num].re_grade = 0;
@@ -89,19 +89,19 @@ void Add(char name1[],char name2[], double id, int score)
         strcpy(student_list[student_num].GPA, "F");
     //计算这个成绩的班级排名
     student_list[student_num].rank = student_num+1;
+    student_num++;
     //排序score值最大的学生排在最前面
     Sort_by_score();
-    //对每个学生的rank进行赋值,如果是同分则为同rank
-    int i;
+    
+    //最大的score的rank为1，其他的rank依次加1，如果score相同，则rank相同
     student_list[0].rank = 1;
-    for(i=1;i<student_num;i++)
-    {
-        if(student_list[i].C_grade==student_list[i-1].C_grade)
-            student_list[i].rank = student_list[i-1].rank;
-        else
-            student_list[i].rank = i+1;
+
+    for(int i=1;i<student_num;i++){
+        if(student_list[i].C_grade==student_list[i-1].C_grade)student_list[i].rank=student_list[i-1].rank;
+        else student_list[i].rank=student_list[i-1].rank+1;
     }
-    student_num++;
+    
+    
 }
 //Delete(id): 根据学号删除某个学⽣的信息；
 void Delete(double id)
@@ -134,10 +134,10 @@ void Search(double id)
             printf("|%10s|%9s|", student_list[i].first_name, student_list[i].last_name);
             printf("%12.0f|", student_list[i].number);
             printf("%7d|", student_list[i].C_grade);
-            if(student_list[i].re_grade==0)
-                printf("%9s|", "是");
+            if(student_list[i].re_grade==1)
+                printf("%9s|", "重修");
             else
-                printf("%9s|", "否");
+                printf("%9s|", "正常");
             printf("%3s|", student_list[i].GPA);
             printf("%4d|\n", student_list[i].rank);
             break;
@@ -145,8 +145,6 @@ void Search(double id)
     }
 }
 
-// hh rr 202008010110 100
-// hh rr 202008010109 100
 //⽣成根据学号顺序排列学⽣信息的表格
 void Sort_by_id(){
     int i,j;
@@ -236,9 +234,9 @@ void prime(double id){
                 }
             }
             if(flag==1)
-                printf("yes");//是素数
+                printf("yes\n");//是素数
             else
-                printf("no");//不是素数
+                printf("no\n");//不是素数
             break;
         }
     }
@@ -265,9 +263,9 @@ void coprime(double id1, double id2){
         }
     }
     if(flag==1)
-        printf("yes");//互质 
+        printf("yes\n");//互质 
     else
-        printf("no");//不是互质
+        printf("no\n");//不是互质
 
     
 
@@ -275,8 +273,15 @@ void coprime(double id1, double id2){
     
 }
 
-
-
+//以表格形式输出所有学生id
+void Print_id(){
+    int i;
+    printf("All student id:\n");
+    for(i=0;i<student_num;i++)
+    {
+        printf("%12.0f\n", student_list[i].number);
+    }
+}
 //以表格形式输出所有学生信息
 void Print_all(){
     int i;
@@ -288,15 +293,14 @@ void Print_all(){
         printf("|%10s|%9s|", student_list[i].first_name, student_list[i].last_name);
         printf("%12.0f|", student_list[i].number);
         printf("%7d|", student_list[i].C_grade);
-        if(student_list[i].re_grade==0)
-            printf("%9s|", "是");
+        if(student_list[i].re_grade==1)
+            printf("%10s|", "重修");
         else
-            printf("%9s|", "否");
+            printf("%10s|", "正常");
         printf("%3s|", student_list[i].GPA);
         printf("%4d|\n", student_list[i].rank);
     }
     printf("|——————————|—————————|————————————|———————|————————|———|————|\n");
-//1 hh hh 202008010110 99
 }
 
 //界面菜单
@@ -332,7 +336,6 @@ void info(int N){
         printf("0 exit\n");
     }
 }
-
 
 //执行菜单选项函数switch语句
 void menu(int n){
@@ -376,12 +379,15 @@ void menu(int n){
             break;
         case 3:
             //删除学生信息
+            Print_id();
             printf("\nPlease input the id of the student:");
             scanf("%lf", &id);
             Delete(id);
+            Print_all();
             break;
         case 4:
             //查找学生信息
+            Print_id();
             printf("\nPlease input the id of the student:");
             scanf("%lf", &id);
             Search(id);
@@ -402,11 +408,13 @@ void menu(int n){
             Min();
             break;
         case 9:
+            Print_id();
             printf("\nPlease input the id of the student:");
             scanf("%lf", &id);
             prime(id);
             break;
         case 10:
+            Print_id();
             printf("\nPlease input the id of the student:");
             scanf("%lf %lf", &id1, &id2);
             coprime(id1, id2);
@@ -421,13 +429,19 @@ void menu(int n){
     system("pause");
 
 }
+
 int main(){
     int n;
     info(0);
     printf("Please enter a number between 1 and 10.:");
+    Add("Ming", "Xiao", 202100123445, 99);
+    Add("Hong", "Xiao", 201900101002, 99);
+    Add("Huang", "Xiao", 202001000111, 98);
+    Add("Zhang", "Xiao", 202102010111, 97);
+    Add("Hua", "Li", 202001101111, 100);
     //不断读入并判断输出info界面菜单
-    while(true){
-        scanf("%d",&n);
+    while(scanf("%d",&n),n){
+
         //执行菜单选项函数
         menu(n);
         info(1);

@@ -39,7 +39,6 @@ public:
 	void computer();//人机
 	void twocomputer();//机机
 };
-
 void Start::show()//游戏页面 
 {
 	system("color F2");
@@ -122,15 +121,29 @@ void Start::clear()//初始化棋盘
 {
 	system("color F2");//实现背景色白，字体为绿
 	cout << endl << endl;
-	cout << '\t' << '\t' << '\t' << '\t' << '\t' << "你要设置的棋盘规模大小： ";
-	cin >> N;
-	for (int i = 1; i <= N; i++)
+	//cout << '\t' << '\t' << '\t' << '\t' << '\t' << "你要设置的棋盘规模大小： ";
+	//cin >> N;
+    N=8;
+	/* for (int i = 1; i <= N; i++)
 	{
 		for (int j = 1; j <= N; j++)
 		{
 			chess[i][j] = '.';
 		}
-	}
+	} */
+    for(int i=1;i<=6;i++){
+        if(i==3||i==4){
+            for(int j=1;j<=N;j++){
+            chess[i][j] = '.';
+            }
+        }
+        else{
+            for(int j=1;j<=N;j++){
+                if(j==3||j==4) chess[i][j] = '.';
+                else chess[i][j]=' ';
+            }
+        }
+    }
 }
 void Start::print()//打印棋盘 
 {
