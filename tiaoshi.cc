@@ -39,6 +39,8 @@ void Adds(int n, char name[][20], double id[], int score[])
             student_list[student_num].re_grade = 0;
         //GPA等级为A+, A, B+, B, C+, C, D, F,F为60分以下的成绩
         if(score[i]>=60)
+
+        
             strcpy(student_list[student_num].GPA, "A+");
         else if(score[i]>=55&&score[i]<60)
             strcpy(student_list[student_num].GPA, "A");
